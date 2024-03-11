@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:12
+    container_name: bookWise-pg
+    environment:
+      POSTGRES_DB: bookWisedb
+      POSTGRES_USER: bookWise
+      POSTGRES_PASSWORD: bookWise
+    network_mode: bridge
+    ports:
+      - 5432:5432
+    volumes:
+      - bookWise_pg_data:/var/lib/postgresql/data
+
+volumes:
+  bookWise_pg_data:
+    driver: local
