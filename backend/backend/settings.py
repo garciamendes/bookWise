@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ast.literal_eval(os.getenv('DEBUG'))
 
-ALLOWED_HOSTS = ['*'] if DEBUG else os.getenv('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -46,22 +46,22 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third party
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'dj_rest_auth',
     'django_filters',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google',
     'django_extensions',
     'corsheaders',
 
     # Local
     'core',
+    'authentication',
+    'book'
 ]
 
 MIDDLEWARE = [
@@ -74,35 +74,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Provider specific settings
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'EMAIL_AUTHENTICATION': True,
-        'APP': {
-            'client_id': os.getenv('CLIENT_ID', ''),
-            'secret': os.getenv('SECRET', ''),
-            'key': ''
-        },
-        'SCOPE': [
-            'profile',
-            'email'
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online'
-        }
-    },
-    'github': {
-        'APP': {
-            'client_id': os.getenv('CLIENT_ID_GITHUB', ''),
-            'secret': os.getenv('SECRET_GITHUB', ''),
-            'key': ''
-        }
-    }
-}
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -138,7 +109,6 @@ AUTHENTICATION_BACKENDS = [
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -149,7 +119,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432')
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -182,7 +151,6 @@ REST_AUTH = {
 
     # SERIALIZERS,
     'USER_DETAILS_SERIALIZER': 'authentication.serializers.UserSerializer',
-    'PASSWORD_RESET_SERIALIZER': 'authentication.serializers.PasswordResetSerializer',
 }
 
 SIMPLE_JWT = {
@@ -190,11 +158,9 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
-SITE_ID = 1
-
 # REST_FRAMEWORK
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
     'PAGE_SIZE': 10,
 
     # Use Django's standard `django.contrib.auth` permissions,
@@ -220,6 +186,11 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [] if DEBUG else os.getenv('ALLOWED_ORIGINS').split(',')
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -242,7 +213,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-MEDIA_ROOT = 'dev/' if DEBUG else os.getenv('MEDIA_ROOT', '')
+MEDIA_ROOT = 'uploads/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
