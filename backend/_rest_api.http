@@ -1,1 +1,11 @@
+### List all Books
 GET {{baseUrl}}/api/book/
+
+### Filter books by search (Title book)
+GET {{baseUrl}}/api/book/?search=Domain-Drive
+
+### Filter books by search (Title author)
+GET {{baseUrl}}/api/book/?search=George
+
+### Filter books by search (Title author)
+GET {{baseUrl}}/api/book/?categories=alegoria,programacao
