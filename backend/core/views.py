@@ -4,8 +4,9 @@ from rest_framework.mixins import ListModelMixin
 
 # Local
 from .serializers import CategoriesListSerializer
-from .models import Catagory
+from .models import Category
 
 class CatagoryViewset(ListModelMixin, GenericViewSet):
-    queryset = Catagory.objects.all()
+    queryset = Category.objects.all()
     serializer_class = CategoriesListSerializer
+    lookup_field = ['slug']

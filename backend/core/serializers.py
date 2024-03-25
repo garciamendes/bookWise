@@ -2,10 +2,10 @@
 from rest_framework import serializers
 
 # Local
-from .models import Catagory
+from .models import Category
 
 class CategoriesListSerializer(serializers.Serializer):
 
     class Meta:
-        model = Catagory
+        model = Category
         fields = ['slug', 'title']

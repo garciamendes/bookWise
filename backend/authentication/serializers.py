@@ -6,47 +6,32 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    total_page_read = serializers.IntegerField(
+        source='profile.total_page_read')
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email']
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'total_page_read'
+        ]
 
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        profile = instance.profile
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+        instance.first_name = validated_data.get(
+            'first_name', instance.first_name)
+        instance.last_name = validated_data.get(
+            'last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
 
-    class Meta:
-        model = get_user_model()
-        fields = ['id', 'username', 'first_name', 'last_name']
+        profile.total_page_read = profile_data.get(
+            'total_page_read', profile.total_page_read)
+        profile.save()
 
-
-class CreateUserSerializer(SimpleUserSerializer):
-
-    class Meta(SimpleUserSerializer.Meta):
-        fields = ['id', 'email', 'first_name', 'last_name']
-
-
-class UpdateUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = get_user_model()
-        fields = ['first_name', 'last_name']
-
-
-class UserProfileListSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(source='profile.created', read_only=True)
-
-    class Meta:
-        model = get_user_model()
-        fields = ['id', 'username', 'first_name', 'last_name', 'created_at']
-        read_only_fields = ('id', 'username', 'created_at')
-
-
-class UserProfileCreateSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
-    email = serializers.EmailField()
-
-
-class UserProfileUpdateSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=255)
-    last_name = serializers.CharField(max_length=255)
+        return instance

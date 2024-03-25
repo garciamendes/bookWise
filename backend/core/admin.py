@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # Local
-from .models import Catagory
+from .models import Category
 
 class CatagoryAdmin(admin.ModelAdmin):
     list_display = ['title', 'slug']
@@ -12,4 +12,4 @@ class CatagoryAdmin(admin.ModelAdmin):
     readonly_fields = ['slug', 'created', 'modified']
 
 
-admin.site.register(Catagory, CatagoryAdmin)
+admin.site.register(Category, CatagoryAdmin)
