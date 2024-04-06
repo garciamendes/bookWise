@@ -4,7 +4,7 @@ from rest_framework import serializers
 # Local
 from .models import Category
 
-class CategoriesListSerializer(serializers.Serializer):
+class CategoriesListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category

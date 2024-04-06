@@ -13,7 +13,7 @@ class BookFilters(FilterSet):
         fields = ['categories']
 
     def categories_filter(self, queryset, name, values):
-        if not values:
+        if not values or values == 'all':
             return queryset
 
         categories_to_filters = values.split(',')

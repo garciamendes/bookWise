@@ -12,21 +12,26 @@ from .models import (
 
 
 class BookListSerializer(serializers.ModelSerializer):
-    categories = serializers.SerializerMethodField()
+    categories = CategoriesListSerializer(many=True)
+    rating = serializers.SerializerMethodField(method_name='get_rating')
 
     class Meta:
         model = Book
         fields = [
             'uid',
+            'title',
+            'description',
             'author',
             'thumbnail',
             'total_pages',
             'categories',
+            'rating',
             'created',
         ]
 
-    def get_categories(self, obj):
-        return self.context.get(obj.uid, [])
+    def get_rating(self, obj):
+        book_rating = obj.book_rating.first()
+        return book_rating.rating if book_rating else 0
 
 
 class BookCreateUpdateSerializer(serializers.ModelSerializer):

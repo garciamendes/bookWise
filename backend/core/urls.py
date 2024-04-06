@@ -11,6 +11,6 @@ from rest_framework.routers import DefaultRouter
 from .views import CatagoryViewset
 
 router = DefaultRouter(trailing_slash=True)
-router.register(r'categories', CatagoryViewset, basename='categories')
+router.register(r'', CatagoryViewset, basename='categories')
 
 urlpatterns = router.urls
