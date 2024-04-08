@@ -18,6 +18,7 @@ import { IBook, ICategory, IFiltersExplore, IStateWithPagination } from "@/utils
 import { Pagination } from "@/components/pagination"
 import Image from "next/image"
 import { Star } from "@/components/stars"
+import { BookListSkeleton } from "@/components/loaders-skeletons/bookListSkeleton"
 
 const Home = () => {
   const searchParams = useSearchParams()
@@ -47,14 +48,18 @@ const Home = () => {
     },
   })
 
-  const { data: listBooks, isError: isErrorListBooks, isFetching: isLoadingListBooks, refetch: refetchListBooks } = useQuery<IStateWithPagination<Array<IBook>>>({
-    queryKey: ['books'],
-    queryFn: async () => {
-      const response = await api.get(`/api/book/?${params.toString()}`)
+  const {
+    data: listBooks,
+    isError: isErrorListBooks,
+    isFetching: isLoadingListBooks,
+    refetch: refetchListBooks } = useQuery<IStateWithPagination<Array<IBook>>>({
+      queryKey: ['books'],
+      queryFn: async () => {
+        const response = await api.get(`/api/book/?${params.toString()}`)
 
-      return response.data
-    }
-  })
+        return response.data
+      }
+    })
 
   const [filters, setFilters] = useState<IFiltersExplore>({})
 
@@ -75,9 +80,10 @@ const Home = () => {
   useEffect(() => {
     setFilters(prevState => ({
       ...prevState,
-      'search': params.get('search') as string
+      'search': params.get('search') as string,
+      'page': params.get('page') as string
     }))
-  }, [params.get('search'), params.get('categories')])
+  }, [params.get('search'), params.get('categories'), params.get('page')])
 
   useEffect(() => {
     const { categories } = filters
@@ -86,7 +92,7 @@ const Home = () => {
     params.set('categories', categorieToFilter as string)
     router.push(`${pathname}?${params.toString()}`)
     refetchListBooks()
-  }, [filters.categories, filters.search])
+  }, [filters.categories, filters.search, filters.page])
 
   const handleSendFilterCategories = (slug: string) => {
     if (filters.categories?.includes(slug)) {
@@ -126,24 +132,7 @@ const Home = () => {
   const renderContent = () => {
     if (isLoadingListBooks) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[160px] my-3">
-          {Array.from({ length: 10 }).map(_ => {
-            return (
-              <div className="flex items-center gap-3 rounded-lg p-2 bg-slate-800">
-                <div className="skeleton h-[145px]  w-[140px]"></div>
-
-                <div className="flex flex-1 flex-col h-full justify-between">
-                  <div className="flex flex-col gap-1">
-                    <div className="skeleton w-full h-4"></div>
-                    <div className="skeleton w-full h-4"></div>
-                  </div>
-
-                  <div className="skeleton w-full h-4"></div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <BookListSkeleton />
       )
     }
 
@@ -190,31 +179,33 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-col h-full flex-1">
+    <div className="flex flex-col h-full w-full">
       <Header name="Explorar" icon={PiBinoculars} hasSearchBar placeholder="Buscar livro ou autor" />
 
-      <div className="flex items-center gap-3 mt-3 w-[calc(100%-300px)] overflow-x-auto ">
-        {isFetching ? (
-          <span className="w-full flex justify-center items-center py-5">
-            <span className="loading loading-dots loading-xs"></span>
-          </span>
-        ) : (
-          <>
-            <button
-              onClick={() => handleSendFilterCategories('all')}
-              className={`cursor-pointer border rounded-full border-purple-900 px-3 py-1 hover:bg-purple-900 hover:text-white duration-300 ${filters.categories?.includes('all') && 'bg-purple-900 text-white'}`}>
-              Tudo
-            </button>
-
-            {listCategories?.map(category => (
+      <div className="w-full overflow-auto">
+        <div className="flex flex-1 items-center gap-3 mt-3">
+          {isFetching ? (
+            <span className="w-full flex justify-center items-center py-5">
+              <span className="loading loading-dots loading-xs"></span>
+            </span>
+          ) : (
+            <>
               <button
-                onClick={() => handleSendFilterCategories(category.slug)}
-                className={`cursor-pointer border rounded-full border-purple-900 px-3 py-1 hover:bg-purple-900 hover:text-white duration-300 ${filters.categories?.includes(category.slug) && 'bg-purple-900 text-white'}`}>
-                {category.title || '---'}
+                onClick={() => handleSendFilterCategories('all')}
+                className={`cursor-pointer border rounded-full border-purple-900 px-3 py-1 hover:bg-purple-900 hover:text-white duration-300 ${filters.categories?.includes('all') && 'bg-purple-900 text-white'}`}>
+                Tudo
               </button>
-            ))}
-          </>
-        )}
+
+              {listCategories?.map(category => (
+                <button
+                  onClick={() => handleSendFilterCategories(category.slug)}
+                  className={`cursor-pointer border rounded-full border-purple-900 px-3 py-1 hover:bg-purple-900 hover:text-white duration-300 ${filters.categories?.includes(category.slug) && 'bg-purple-900 text-white'}`}>
+                  {category.title || '---'}
+                </button>
+              ))}
+            </>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col mt-4 flex-1 overflow-auto">

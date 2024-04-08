@@ -6,6 +6,7 @@ export interface ICategory {
 export interface IFiltersExplore {
   categories?: string[]
   search?: string
+  page?: string
 }
 
 export interface IBook {

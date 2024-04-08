@@ -16,7 +16,7 @@ class CatagoryViewset(ListModelMixin, GenericViewSet):
 
     @action(detail=False, methods=['get'], url_path='categories-filters')
     def categories_filters(self, request, *args, **kwargs):
-        queryset = self.get_queryset()[:10]
+        queryset = self.get_queryset()
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

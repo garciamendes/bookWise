@@ -26,7 +26,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
         </Link>
       </div>
 
-      <div className='w-[calc(100%-260px)]'>
+      <div className='flex flex-1'>
         {children}
       </div>
     </div>
