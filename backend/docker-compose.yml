@@ -4,7 +4,7 @@ services:
     image: postgres:12
     container_name: bookWise-pg
     environment:
-      POSTGRES_DB: bookWisedb
+      POSTGRES_DB: bookWisepg
       POSTGRES_USER: bookWise
       POSTGRES_PASSWORD: bookWise
     network_mode: bridge
